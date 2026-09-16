@@ -1,1 +1,1 @@
-export * from './CatalogFilters';
+export { CatalogFilters, BookFilters } from './CatalogFilters';

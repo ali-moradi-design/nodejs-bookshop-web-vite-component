@@ -110,3 +110,10 @@ Optional aggregate: `import { Button, Card } from '@/components/ui-kit'`.
 Every file under `pages/` should be a few lines: import one container and render it.
 
 `pnpm check:architecture` fails if a page imports `@/services` or `@/hooks` directly.
+
+## Naming & colocation
+
+- Component folders are **PascalCase** matching the primary export (`BookCard/BookCard.tsx`).
+- Each folder exposes a public `index.ts` barrel.
+- Stories/tests live beside the component (`BookCard.stories.tsx`, `__tests__/`).
+- Containers are `*Container.tsx` under `containers/`; pages are `*Page.tsx` under `pages/`.
