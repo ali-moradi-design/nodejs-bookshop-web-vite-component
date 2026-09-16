@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { usePreferences } from '@/shared/hooks';
+import { usePreferences } from '@/hooks';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = usePreferences((s) => s.theme);

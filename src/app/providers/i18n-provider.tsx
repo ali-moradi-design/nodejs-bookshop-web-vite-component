@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { i18n } from '@/shared/i18n';
-import { usePreferences } from '@/shared/hooks';
+import { i18n } from '@/i18n';
+import { usePreferences } from '@/hooks';
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const locale = usePreferences((s) => s.locale);

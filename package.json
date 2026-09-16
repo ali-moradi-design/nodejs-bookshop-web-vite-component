@@ -1,9 +1,9 @@
 {
-  "name": "nodejs-bookshop-web-vite-feature",
+  "name": "nodejs-bookshop-web-vite-component",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Niko Bookshop storefront SPA \u2014 Vite + React + TypeScript with feature-based architecture. Companion UI for nodejs-bookshop-layered.",
+  "description": "Niko Bookshop storefront SPA \u2014 Vite + React + TypeScript with Component-based architecture. Companion UI for nodejs-bookshop-layered.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -95,7 +95,7 @@
     "vite",
     "react",
     "typescript",
-    "feature-based",
+    "component-based",
     "bookstore",
     "i18n"
   ]

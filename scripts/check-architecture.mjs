@@ -1,20 +1,56 @@
 #!/usr/bin/env node
 /**
- * Feature-based architecture boundary checks.
- * Fails on: leftover FSD folders, deep cross-feature imports, shared→feature,
- * feature→app, relative escapes into other features, missing public barrels.
+ * Component-based architecture checks.
+ * Requires expected top-level folders; forbids src/features and FSD leftovers.
+ * Optionally flags pages importing services deeply (prefer containers/hooks).
  */
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
-import { join, relative, dirname, normalize, resolve } from 'node:path';
+import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src');
 const errors = [];
+const warnings = [];
 
-const BANNED_DIRS = ['entities', 'widgets', 'pages'];
-for (const d of BANNED_DIRS) {
+const REQUIRED = [
+  'app',
+  'components',
+  'containers',
+  'pages',
+  'hooks',
+  'services',
+  'types',
+  'utils',
+  'config',
+  'i18n',
+  'store',
+];
+
+for (const d of REQUIRED) {
+  if (!existsSync(join(ROOT, d))) {
+    errors.push(`Missing required folder: src/${d}`);
+  }
+}
+
+const FORBIDDEN = ['features', 'entities', 'widgets', 'shared'];
+for (const d of FORBIDDEN) {
   if (existsSync(join(ROOT, d))) {
-    errors.push(`Banned FSD folder still present: src/${d}`);
+    errors.push(`Forbidden leftover folder: src/${d}`);
+  }
+}
+
+// No Atomic Design layer folders under components
+const ATOMIC = ['atoms', 'molecules', 'organisms', 'templates'];
+for (const d of ATOMIC) {
+  if (existsSync(join(ROOT, 'components', d))) {
+    errors.push(`Forbidden Atomic Design folder: src/components/${d}`);
+  }
+}
+
+// No Clean Architecture trees
+for (const d of ['domain', 'application', 'infrastructure', 'presentation']) {
+  if (existsSync(join(ROOT, d))) {
+    errors.push(`Forbidden Clean Architecture folder: src/${d}`);
   }
 }
 
@@ -23,96 +59,66 @@ function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) walk(p, out);
-    else if (/\.(ts|tsx)$/.test(name)) out.push(p);
+    else if (/\.(ts|tsx)$/.test(name) && !name.endsWith('.d.ts')) out.push(p);
   }
   return out;
 }
 
 const IMPORT_RE = /from\s+['"]([^'"]+)['"]/g;
-
-function featureOf(fileRel) {
-  const m = fileRel.match(/^features\/([^/]+)/);
-  return m ? m[1] : null;
-}
-
-function layerOf(fileRel) {
-  return fileRel.split('/')[0];
-}
+const DYNAMIC_RE = /import\(\s*['"]([^'"]+)['"]\s*\)/g;
 
 for (const file of walk(ROOT)) {
   const rel = relative(ROOT, file).replaceAll('\\', '/');
   const src = readFileSync(file, 'utf8');
-  const fromFeature = featureOf(rel);
-  const fromLayer = layerOf(rel);
-  const fileDir = dirname(file);
-
-  for (const match of src.matchAll(IMPORT_RE)) {
-    const spec = match[1];
-
-    if (spec.startsWith('@/')) {
+  for (const re of [IMPORT_RE, DYNAMIC_RE]) {
+    re.lastIndex = 0;
+    for (const match of src.matchAll(re)) {
+      const spec = match[1];
       if (
+        spec.startsWith('@/features') ||
+        spec.startsWith('@/shared') ||
         spec.startsWith('@/entities') ||
-        spec.startsWith('@/widgets') ||
-        spec.startsWith('@/pages')
+        spec.startsWith('@/widgets')
       ) {
-        errors.push(`${rel}: banned FSD import '${spec}'`);
-        continue;
-      }
-
-      if (fromLayer === 'shared' && spec.startsWith('@/features')) {
-        errors.push(`${rel}: shared must not import features ('${spec}')`);
-      }
-
-      if (fromLayer === 'features' && spec.startsWith('@/app')) {
-        errors.push(`${rel}: features must not import app ('${spec}')`);
-      }
-
-      const fm = spec.match(/^@\/features\/([^/]+)(?:\/(.*))?$/);
-      if (fm) {
-        const toFeature = fm[1];
-        const rest = fm[2];
-        if (rest && rest !== '' && fromFeature !== toFeature) {
-          errors.push(
-            `${rel}: deep cross-feature import '${spec}' — use @/features/${toFeature}`,
-          );
-        }
-      }
-      continue;
-    }
-
-    // Relative imports that escape into another feature
-    if (spec.startsWith('.') && fromFeature) {
-      const resolved = normalize(resolve(fileDir, spec));
-      const resolvedRel = relative(ROOT, resolved).replaceAll('\\', '/');
-      const toFeature = featureOf(resolvedRel);
-      if (toFeature && toFeature !== fromFeature) {
-        errors.push(
-          `${rel}: relative cross-feature import '${spec}' → features/${toFeature} — use @/features/${toFeature}`,
-        );
+        errors.push(`${rel}: forbidden legacy import '${spec}'`);
       }
     }
   }
+
+  // Heuristic: pages should not import services deeply — prefer containers/hooks
+  if (rel.startsWith('pages/') && /from\s+['"]@\/services\//.test(src)) {
+    warnings.push(
+      `${rel}: page imports @/services/* — prefer containers/hooks to mediate API access`,
+    );
+  }
 }
 
-const featuresRoot = join(ROOT, 'features');
-if (existsSync(featuresRoot)) {
-  for (const name of readdirSync(featuresRoot)) {
-    const p = join(featuresRoot, name);
+// Component folders should be PascalCase and have index.ts
+if (existsSync(join(ROOT, 'components'))) {
+  for (const name of readdirSync(join(ROOT, 'components'))) {
+    const p = join(ROOT, 'components', name);
     if (!statSync(p).isDirectory()) continue;
-    if (!existsSync(join(p, 'index.ts'))) {
-      errors.push(`features/${name}: missing public index.ts`);
+    if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) {
+      errors.push(`components/${name}: folder should be PascalCase`);
+    }
+    if (!existsSync(join(p, 'index.ts')) && !existsSync(join(p, 'index.tsx'))) {
+      errors.push(`components/${name}: missing public index.ts`);
     }
   }
-}
-
-if (!existsSync(join(ROOT, 'app', 'layout', 'index.ts'))) {
-  errors.push('app/layout: missing public index.ts');
 }
 
 if (errors.length) {
   console.error(
     `Architecture check failed (${errors.length}):\n` + errors.map((e) => `  - ${e}`).join('\n'),
   );
+  if (warnings.length) {
+    console.error(`Warnings (${warnings.length}):\n` + warnings.map((e) => `  - ${e}`).join('\n'));
+  }
   process.exit(1);
 }
+
 console.log(`Architecture check passed (${walk(ROOT).length} files).`);
+if (warnings.length) {
+  console.log(`Warnings (${warnings.length}):`);
+  for (const w of warnings) console.log(`  - ${w}`);
+}

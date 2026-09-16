@@ -38,7 +38,11 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes('/src/features/admin-')) {
+            if (
+              id.includes('/src/pages/Admin') ||
+              id.includes('/src/containers/Admin') ||
+              id.includes('/src/components/Admin')
+            ) {
               return 'admin';
             }
             if (!id.includes('node_modules')) return;
