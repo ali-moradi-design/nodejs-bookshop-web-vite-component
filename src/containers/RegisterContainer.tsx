@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { RegisterForm } from '@/components/RegisterForm';
+import { AuthCard } from '@/components/AuthCard';
 import { usePageTitle } from '@/hooks';
 
 export function RegisterContainer() {
   const { t } = useTranslation();
   usePageTitle(t('nav.register'));
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4">
+    <AuthCard>
       <RegisterForm />
-    </div>
+    </AuthCard>
   );
 }

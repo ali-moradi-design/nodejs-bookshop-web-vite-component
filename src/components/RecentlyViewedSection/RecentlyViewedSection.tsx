@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookCard } from '@/components/BookCard';
 import { FavoriteToggleButton } from '@/components/FavoriteToggleButton';
-import { useAuthStore } from '@/store/auth-store';
 import { readRecentlyViewed, type RecentBookSnapshot } from '@/utils';
 import { snapshotToBook } from '@/utils';
 
-export function RecentlyViewedSection({ excludeId }: { excludeId?: string }) {
+type Props = {
+  excludeId?: string;
+  isAuthenticated?: boolean;
+};
+
+export function RecentlyViewedSection({ excludeId, isAuthenticated = false }: Props) {
   const { t } = useTranslation();
-  const user = useAuthStore((s) => s.user);
   const [items, setItems] = useState<RecentBookSnapshot[]>([]);
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export function RecentlyViewedSection({ excludeId }: { excludeId?: string }) {
             key={book.id}
             book={book}
             actions={
-              <FavoriteToggleButton bookId={book.id} compact isAuthenticated={Boolean(user)} />
+              <FavoriteToggleButton bookId={book.id} compact isAuthenticated={isAuthenticated} />
             }
           />
         ))}

@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/auth-store';
 import { ProfileForm } from '@/components/ProfileForm';
+import { usePageTitle } from '@/hooks';
 
 export function ProfileContainer() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.profile'));
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
   const refreshMe = useAuthStore((s) => s.refreshMe);

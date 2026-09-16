@@ -24,7 +24,7 @@ export function HomeContainer() {
         onRetry={() => void refetch()}
         isAuthenticated={Boolean(user)}
       />
-      <RecentlyViewedSection />
+      <RecentlyViewedSection isAuthenticated={Boolean(user)} />
     </div>
   );
 }
