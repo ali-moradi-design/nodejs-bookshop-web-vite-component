@@ -120,9 +120,9 @@ Every file under `pages/` should be a few lines: import one container and render
 
 ## Inventory (generated)
 
-### Components (73)
+### Components (74)
 
-ActiveFilterChips, AddToCartButton, AdminBooksPanel, AdminCharts, AdminDashboardPanel, AdminDiscountsPanel, AdminOrdersPanel, AdminPageHeader, AdminPermissionsPanel, AdminReportsPanel, AdminRolesPanel, AdminShell, AdminUsersPanel, Alert, AuthCard, Badge, BeamsBackground, BookCard, BookCardSkeleton, BookCoverImage, BookDetailPanel, BookDetailSkeleton, BookGrid, Button, Card, CartBadgeLink, CartLineControls, CartPanel, CartSheet, CartSheetLine, CatalogFilters, CheckoutForm, ClearCartButton, CreateReviewForm, DashboardPanel, DataTable, Dialog, DropdownMenu, EmptyState, FavoriteToggleButton, FeaturedBooksSection, Footer, Header, HeaderBookSearch, HomeHero, Input, KokonutButton, KpiCards, Label, LocaleSwitcher, LoginForm, LoveRating, OrdersTable, PanelShell, PayOrderButton, PriceRangeFilter, ProfileForm, RecentlyViewedSection, RegisterForm, RemoveFavoriteButton, ReportIssueForm, RequireAuth, ReviewList, Select, Separator, Sheet, Skeleton, Slider, Spinner, StorefrontShell, Table, Textarea, ThemeSwitcher
+ActiveFilterChips, AddToCartButton, AdminBooksPanel, AdminCharts, AdminDashboardPanel, AdminDiscountsPanel, AdminOrdersPanel, AdminPageHeader, AdminPermissionsPanel, AdminReportsPanel, AdminRolesPanel, AdminShell, AdminUsersPanel, Alert, AuthCard, Badge, BeamsBackground, BookCard, BookCardSkeleton, BookCoverImage, BookDetailPanel, BookDetailSkeleton, BookGrid, Button, Card, CartBadgeLink, CartLineControls, CartPanel, CartSheet, CartSheetLine, CatalogFilters, CheckoutForm, ClearCartButton, CreateReviewForm, DashboardPanel, DataTable, Dialog, DropdownMenu, EmptyState, FavoriteToggleButton, FavoritesList, FeaturedBooksSection, Footer, Header, HeaderBookSearch, HomeHero, Input, KokonutButton, KpiCards, Label, LocaleSwitcher, LoginForm, LoveRating, OrdersTable, PanelShell, PayOrderButton, PriceRangeFilter, ProfileForm, RecentlyViewedSection, RegisterForm, RemoveFavoriteButton, ReportIssueForm, RequireAuth, ReviewList, Select, Separator, Sheet, Skeleton, Slider, Spinner, StorefrontShell, Table, Textarea, ThemeSwitcher
 
 ### Containers (23)
 
