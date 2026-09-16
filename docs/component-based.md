@@ -117,3 +117,21 @@ Every file under `pages/` should be a few lines: import one container and render
 - Each folder exposes a public `index.ts` barrel.
 - Stories/tests live beside the component (`BookCard.stories.tsx`, `__tests__/`).
 - Containers are `*Container.tsx` under `containers/`; pages are `*Page.tsx` under `pages/`.
+
+## Inventory (generated)
+
+### Components (73)
+
+ActiveFilterChips, AddToCartButton, AdminBooksPanel, AdminCharts, AdminDashboardPanel, AdminDiscountsPanel, AdminOrdersPanel, AdminPageHeader, AdminPermissionsPanel, AdminReportsPanel, AdminRolesPanel, AdminShell, AdminUsersPanel, Alert, AuthCard, Badge, BeamsBackground, BookCard, BookCardSkeleton, BookCoverImage, BookDetailPanel, BookDetailSkeleton, BookGrid, Button, Card, CartBadgeLink, CartLineControls, CartPanel, CartSheet, CartSheetLine, CatalogFilters, CheckoutForm, ClearCartButton, CreateReviewForm, DashboardPanel, DataTable, Dialog, DropdownMenu, EmptyState, FavoriteToggleButton, FeaturedBooksSection, Footer, Header, HeaderBookSearch, HomeHero, Input, KokonutButton, KpiCards, Label, LocaleSwitcher, LoginForm, LoveRating, OrdersTable, PanelShell, PayOrderButton, PriceRangeFilter, ProfileForm, RecentlyViewedSection, RegisterForm, RemoveFavoriteButton, ReportIssueForm, RequireAuth, ReviewList, Select, Separator, Sheet, Skeleton, Slider, Spinner, StorefrontShell, Table, Textarea, ThemeSwitcher
+
+### Containers (23)
+
+AdminAnalyticsContainer, AdminBooksContainer, AdminDashboardContainer, AdminDiscountsContainer, AdminOrdersContainer, AdminPermissionsContainer, AdminReportsContainer, AdminRolesContainer, AdminUsersContainer, BookDetailContainer, CartContainer, CatalogContainer, CheckoutContainer, DashboardContainer, FavoritesContainer, HomeContainer, LoginContainer, MyReviewsContainer, OrderDetailContainer, OrdersContainer, ProfileContainer, RegisterContainer, ReportIssueContainer
+
+### Pages (23)
+
+AdminAnalyticsPage, AdminBooksPage, AdminDashboardPage, AdminDiscountsPage, AdminOrdersPage, AdminPermissionsPage, AdminReportsPage, AdminRolesPage, AdminUsersPage, BookDetailPage, CartPage, CatalogPage, CheckoutPage, DashboardPage, FavoritesPage, HomePage, LoginPage, MyReviewsPage, OrderDetailPage, OrdersPage, ProfilePage, RegisterPage, ReportIssuePage
+
+### Services (13)
+
+admin, auth, book, cart, discount, favorite, http, order, permission, report, review, role, user

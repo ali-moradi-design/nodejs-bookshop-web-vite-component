@@ -19,6 +19,12 @@
 - Zustand (theme/locale/auth prefs)
 - Vitest · Playwright · Storybook · husky · lint-staged · rollup-plugin-visualizer
 
+## Architecture
+
+Component-based SPA layout (`src/components`, `src/containers`, `src/pages`, `src/hooks`, `src/services`).
+
+See [`docs/component-based.md`](./docs/component-based.md). Validate with `pnpm check:architecture`.
+
 ## Prerequisites
 
 1. Run the layered backend on `http://localhost:4000`.
@@ -112,7 +118,7 @@ With an empty `VITE_API_URL`, browser requests go to the Vite origin and are pro
 - **User panel** (`/panel`): dashboard, profile, orders (+ pay), favorites, my reviews, issue report
 - **Admin** (`/admin`): dashboard KPIs, books CRUD + cover upload, orders status, users, roles, permissions, discounts, issue reports, analytics (lazy-loaded)
 
-## Feature-based layout
+## Component-based layout
 
 ```
 src/
