@@ -85,11 +85,17 @@ for (const file of walk(ROOT)) {
     }
   }
 
-  // Heuristic: pages should not import services deeply — prefer containers/hooks
-  if (rel.startsWith('pages/') && /from\s+['"]@\/services\//.test(src)) {
-    warnings.push(
-      `${rel}: page imports @/services/* — prefer containers/hooks to mediate API access`,
-    );
+  // Pages must stay thin: only containers (and React types), no services/hooks/store
+  if (rel.startsWith('pages/') && rel !== 'pages/index.ts') {
+    if (/from\s+['"]@\/services(\/|['"])/.test(src)) {
+      errors.push(`${rel}: pages must not import @/services — use a container`);
+    }
+    if (/from\s+['"]@\/hooks(\/|['"])/.test(src)) {
+      errors.push(`${rel}: pages must not import @/hooks — use a container`);
+    }
+    if (!/from\s+['"]@\/containers\//.test(src) && !rel.endsWith('index.ts')) {
+      errors.push(`${rel}: page should compose a @/containers/* module`);
+    }
   }
 }
 

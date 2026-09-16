@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useOrderQuery } from '@/hooks';
+import { useOrderQuery, usePageTitle } from '@/hooks';
 import { PayOrderButton } from '@/components/PayOrderButton';
 import { formatMoney, formatDate } from '@/utils';
 import { usePreferences } from '@/hooks';
@@ -14,6 +14,7 @@ export function OrderDetailContainer() {
   const params = useParams();
   const id = String(params?.id ?? '');
   const { t } = useTranslation();
+  usePageTitle(t('panel.orderDetail'));
   const locale = usePreferences((s) => s.locale);
 
   const { data, isLoading, error } = useOrderQuery(id);

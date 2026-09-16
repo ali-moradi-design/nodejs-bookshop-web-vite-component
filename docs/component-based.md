@@ -104,3 +104,9 @@ Optional aggregate: `import { Button, Card } from '@/components/ui-kit'`.
 - `services/` — plain TypeScript HTTP/API modules. **No React imports, no JSX.**
 - `hooks/` — React Query queries/mutations and UI hooks. Components/containers call hooks; hooks call services.
 - Avoid importing `@/services/<domain>` from presentational components except via a dedicated hook (e.g. `useUploadBookCoverMutation`).
+
+## Page thinness
+
+Every file under `pages/` should be a few lines: import one container and render it.
+
+`pnpm check:architecture` fails if a page imports `@/services` or `@/hooks` directly.
