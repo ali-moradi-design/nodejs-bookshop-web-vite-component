@@ -98,3 +98,9 @@ DropdownMenu, Table, Spinner/PageLoader, EmptyState, Alert, Slider, Sheet,
 DataTable, KpiCards, KokonutButton, BeamsBackground.
 
 Optional aggregate: `import { Button, Card } from '@/components/ui-kit'`.
+
+## Hooks vs services
+
+- `services/` — plain TypeScript HTTP/API modules. **No React imports, no JSX.**
+- `hooks/` — React Query queries/mutations and UI hooks. Components/containers call hooks; hooks call services.
+- Avoid importing `@/services/<domain>` from presentational components except via a dedicated hook (e.g. `useUploadBookCoverMutation`).

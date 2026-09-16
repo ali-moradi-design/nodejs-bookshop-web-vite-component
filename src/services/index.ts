@@ -1,3 +1,4 @@
+/** Domain API modules (no React / no UI). Prefer hooks for component access. */
 export * from './http';
 export * from './book';
 export * from './cart';

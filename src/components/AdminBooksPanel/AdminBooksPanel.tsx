@@ -7,12 +7,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { uploadBookCover } from '@/services/book';
-import { useBooksQuery } from '@/hooks';
+import {
+  useBooksQuery,
+  useSaveBookMutation,
+  useDeleteBookMutation,
+  useUploadBookCoverMutation,
+  usePreferences,
+} from '@/hooks';
 import { type Book } from '@/types/book';
 import { DataTable } from '@/components/DataTable';
 import { formatMoney } from '@/utils';
-import { usePreferences } from '@/hooks';
 import { ApiError } from '@/services/http';
 import { Alert } from '@/components/Alert';
 import { Badge } from '@/components/Badge';
@@ -28,8 +32,6 @@ import { Input } from '@/components/Input';
 import { Label } from '@/components/Label';
 import { PageLoader } from '@/components/Spinner';
 import { Textarea } from '@/components/Textarea';
-import { useSaveBookMutation } from '@/hooks';
-import { useDeleteBookMutation } from '@/hooks';
 
 const schema = z.object({
   title: z.string().min(1),
@@ -46,6 +48,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export function AdminBooksPanel() {
+  const uploadCover = useUploadBookCoverMutation();
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
   const [open, setOpen] = useState(false);
@@ -115,7 +118,7 @@ export function AdminBooksPanel() {
   const onUpload = async (file?: File | null) => {
     if (!file) return;
     try {
-      const res = await uploadBookCover(file);
+      const res = await uploadCover.mutateAsync(file);
       form.setValue('coverImageUrl', res.url);
       toast.success('Cover uploaded');
     } catch (e) {
