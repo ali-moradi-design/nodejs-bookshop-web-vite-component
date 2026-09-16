@@ -88,3 +88,13 @@ Optionally warns when `pages/` import `@/services/*` directly (containers/hooks 
 - Top-level `src/features/*` vertical slices as the architecture root
 - Atomic Design `atoms` / `molecules` / `organisms` folders
 - Clean Architecture `domain` / `application` / `infrastructure` trees
+
+## UI kit primitives
+
+Low-level presentational building blocks live as individual folders under `components/`:
+
+Button, Input, Label, Textarea, Card, Badge, Skeleton, Separator, Select, Dialog,
+DropdownMenu, Table, Spinner/PageLoader, EmptyState, Alert, Slider, Sheet,
+DataTable, KpiCards, KokonutButton, BeamsBackground.
+
+Optional aggregate: `import { Button, Card } from '@/components/ui-kit'`.

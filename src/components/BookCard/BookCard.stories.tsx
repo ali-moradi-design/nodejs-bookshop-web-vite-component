@@ -43,7 +43,7 @@ function ThemeDecorator({
 }
 
 const meta = {
-  title: 'Entities/BookCard',
+  title: 'Clean Architecture',
   component: BookCard,
   decorators: [
     (Story) => (
