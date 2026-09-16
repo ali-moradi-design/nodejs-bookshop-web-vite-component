@@ -70,7 +70,6 @@ export function AdminReportsPanel() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('nav.reports')}</h1>
       <DataTable columns={columns} data={data ?? []} />
     </div>
   );

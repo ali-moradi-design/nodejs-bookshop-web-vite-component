@@ -79,7 +79,6 @@ export function AdminUsersPanel() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('admin.manageUsers')}</h1>
       <DataTable columns={columns} data={data ?? []} />
     </div>
   );

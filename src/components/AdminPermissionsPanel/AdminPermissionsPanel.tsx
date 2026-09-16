@@ -40,7 +40,6 @@ export function AdminPermissionsPanel() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('nav.permissions')}</h1>
       <DataTable columns={columns} data={data ?? []} pageSize={15} />
     </div>
   );

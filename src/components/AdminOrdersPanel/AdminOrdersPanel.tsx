@@ -78,7 +78,6 @@ export function AdminOrdersPanel() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{t('admin.manageOrders')}</h1>
       <DataTable columns={columns} data={data ?? []} />
     </div>
   );
