@@ -1,58 +1,52 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useBookQuery } from '@/hooks';
+import type { Book } from '@/types/book';
+import type { Review } from '@/types/review';
 import { BookCoverImage } from '@/components/BookCoverImage';
 import { BookDetailSkeleton } from '@/components/BookDetailSkeleton';
-import { useReviewsQuery } from '@/hooks';
-import { useAuthStore } from '@/store/auth-store';
 import { AddToCartButton } from '@/components/AddToCartButton';
 import { FavoriteToggleButton } from '@/components/FavoriteToggleButton';
 import { CreateReviewForm } from '@/components/CreateReviewForm';
 import { LoveRating } from '@/components/LoveRating';
 import { ReviewList } from '@/components/ReviewList';
-import { useTrackRecentlyViewed } from '@/hooks';
 import { formatMoney } from '@/utils';
-import { usePreferences, usePageTitle } from '@/hooks';
 import { Alert } from '@/components/Alert';
 import { Badge } from '@/components/Badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
-import { ApiError } from '@/services/http';
 
-type Props = { bookId: string };
+export type BookDetailPanelProps = {
+  bookId: string;
+  book?: Book;
+  reviews?: Review[];
+  isLoading?: boolean;
+  errorMessage?: string | null;
+  locale: string;
+  isAuthenticated: boolean;
+  currentUserId?: string;
+};
 
-export function BookDetailPanel({ bookId }: Props) {
+export function BookDetailPanel({
+  bookId,
+  book,
+  reviews = [],
+  isLoading,
+  errorMessage,
+  locale,
+  isAuthenticated,
+  currentUserId,
+}: BookDetailPanelProps) {
   const { t } = useTranslation();
-  const locale = usePreferences((s) => s.locale);
-  const user = useAuthStore((s) => s.user);
 
-  const bookQuery = useBookQuery(bookId);
-  useTrackRecentlyViewed(bookQuery.data);
-  usePageTitle(bookQuery.data?.title ?? t('nav.catalog'));
-
-  const reviewsQuery = useReviewsQuery({ book: bookId, limit: 50 }, { enabled: Boolean(bookId) });
-  const reviews = reviewsQuery.data ?? [];
-
-  const averageRating = useMemo(() => {
-    if (reviews.length === 0) return null;
-    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-    return Math.round(sum / reviews.length);
-  }, [reviews]);
-
-  const myReview = useMemo(
-    () => (user ? reviews.find((r) => r.user === user.id) : undefined),
-    [reviews, user],
-  );
-
-  if (bookQuery.isLoading) return <BookDetailSkeleton />;
-  if (bookQuery.error || !bookQuery.data) {
-    return (
-      <Alert variant="destructive">
-        {bookQuery.error instanceof ApiError ? bookQuery.error.message : t('common.error')}
-      </Alert>
-    );
+  if (isLoading) return <BookDetailSkeleton />;
+  if (errorMessage || !book) {
+    return <Alert variant="destructive">{errorMessage ?? t('common.error')}</Alert>;
   }
 
-  const book = bookQuery.data;
+  const averageRating =
+    reviews.length === 0
+      ? null
+      : Math.round(reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length);
+
+  const myReview = currentUserId ? reviews.find((r) => r.user === currentUserId) : undefined;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
@@ -104,8 +98,8 @@ export function BookDetailPanel({ bookId }: Props) {
         </div>
         <p className="leading-relaxed text-muted-foreground">{book.description}</p>
         <div className="flex flex-wrap gap-2">
-          <AddToCartButton bookId={bookId} disabled={book.stock <= 0 || !user} />
-          <FavoriteToggleButton bookId={bookId} isAuthenticated={Boolean(user)} />
+          <AddToCartButton bookId={bookId} disabled={book.stock <= 0 || !isAuthenticated} />
+          <FavoriteToggleButton bookId={bookId} isAuthenticated={isAuthenticated} />
         </div>
 
         <Card>
@@ -113,7 +107,7 @@ export function BookDetailPanel({ bookId }: Props) {
             <CardTitle>{t('book.reviews')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {user ? (
+            {isAuthenticated ? (
               <CreateReviewForm
                 key={myReview?.id ?? 'new'}
                 bookId={bookId}

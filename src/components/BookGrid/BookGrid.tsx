@@ -2,24 +2,27 @@ import type { Book } from '@/types/book';
 import { BookCard } from '@/components/BookCard';
 import { BookCardSkeleton } from '@/components/BookCardSkeleton';
 import { FavoriteToggleButton } from '@/components/FavoriteToggleButton';
-import { useAuthStore } from '@/store/auth-store';
 
 type Props = {
   books: Book[];
   withFavorites?: boolean;
+  isAuthenticated?: boolean;
   renderActions?: (book: Book) => React.ReactNode;
 };
 
-export function BookGrid({ books, withFavorites = false, renderActions }: Props) {
-  const user = useAuthStore((s) => s.user);
-
+export function BookGrid({
+  books,
+  withFavorites = false,
+  isAuthenticated = false,
+  renderActions,
+}: Props) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {books.map((book) => {
         const actions =
           renderActions?.(book) ??
           (withFavorites ? (
-            <FavoriteToggleButton bookId={book.id} compact isAuthenticated={Boolean(user)} />
+            <FavoriteToggleButton bookId={book.id} compact isAuthenticated={isAuthenticated} />
           ) : undefined);
         return <BookCard key={book.id} book={book} actions={actions} />;
       })}

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ActiveFilterChips } from '@/components/ActiveFilterChips';
-import { BookFilters } from '@/components/CatalogFilters';
+import { CatalogFilters } from '@/components/CatalogFilters';
 import { useBookFilters } from '@/hooks';
 import { useCatalogBooks } from '@/hooks';
 import { BookGrid, BookGridSkeleton } from '@/components/BookGrid';
@@ -9,17 +9,19 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { ApiError } from '@/services/http';
 import { usePageTitle } from '@/hooks';
+import { useAuthStore } from '@/store/auth-store';
 
 export function CatalogContainer() {
   const { t } = useTranslation();
   usePageTitle(t('catalog.title'));
+  const user = useAuthStore((s) => s.user);
   const filters = useBookFilters(12);
   const { books, hasMore, isLoading, isFetching, error, refetch } = useCatalogBooks(filters);
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{t('catalog.title')}</h1>
-      <BookFilters {...filters} />
+      <CatalogFilters {...filters} />
       <ActiveFilterChips filters={filters} />
 
       {isLoading && filters.page <= 1 ? <BookGridSkeleton count={12} /> : null}
@@ -41,7 +43,9 @@ export function CatalogContainer() {
           }
         />
       ) : null}
-      {books.length > 0 ? <BookGrid books={books} withFavorites /> : null}
+      {books.length > 0 ? (
+        <BookGrid books={books} withFavorites isAuthenticated={Boolean(user)} />
+      ) : null}
 
       {hasMore ? (
         <div className="flex justify-center">
