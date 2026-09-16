@@ -1,14 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useCartQuery } from '@/hooks';
+import type { Book } from '@/types/book';
+import type { CartItem } from '@/types/cart';
 import { BookCoverImage } from '@/components/BookCoverImage';
-import { useCartBooksQueries } from '@/hooks';
-import { useAuthStore } from '@/store/auth-store';
 import { CartLineControls } from '@/components/CartLineControls';
 import { ClearCartButton } from '@/components/ClearCartButton';
 import { formatMoney } from '@/utils';
-import { usePreferences, usePageTitle } from '@/hooks';
-import { ApiError } from '@/services/http';
 import { Alert } from '@/components/Alert';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
@@ -16,21 +13,35 @@ import { PageLoader } from '@/components/Spinner';
 import { Skeleton } from '@/components/Skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/Table';
 
-export function CartPanel() {
+export type CartRow = {
+  item: CartItem;
+  book?: Book;
+  line: number;
+  loading?: boolean;
+};
+
+export type CartPanelProps = {
+  isAuthenticated: boolean;
+  isLoading?: boolean;
+  errorMessage?: string | null;
+  onRetry?: () => void;
+  rows: CartRow[];
+  subtotal: number;
+  locale: string;
+};
+
+export function CartPanel({
+  isAuthenticated,
+  isLoading,
+  errorMessage,
+  onRetry,
+  rows,
+  subtotal,
+  locale,
+}: CartPanelProps) {
   const { t } = useTranslation();
-  usePageTitle(t('cart.title'));
-  const locale = usePreferences((s) => s.locale);
-  const user = useAuthStore((s) => s.user);
 
-  const cartQuery = useCartQuery({ enabled: Boolean(user) });
-
-  const items = cartQuery.data?.items ?? [];
-  const bookQueries = useCartBooksQueries(
-    items.map((item) => item.bookId),
-    { enabled: Boolean(user) },
-  );
-
-  if (!user) {
+  if (!isAuthenticated) {
     return (
       <EmptyState
         title={t('cart.title')}
@@ -44,19 +55,21 @@ export function CartPanel() {
     );
   }
 
-  if (cartQuery.isLoading) return <PageLoader />;
-  if (cartQuery.error) {
+  if (isLoading) return <PageLoader />;
+  if (errorMessage) {
     return (
       <Alert variant="destructive">
-        {cartQuery.error instanceof ApiError ? cartQuery.error.message : t('common.error')}{' '}
-        <button type="button" className="underline" onClick={() => void cartQuery.refetch()}>
-          {t('common.retry')}
-        </button>
+        {errorMessage}{' '}
+        {onRetry ? (
+          <button type="button" className="underline" onClick={onRetry}>
+            {t('common.retry')}
+          </button>
+        ) : null}
       </Alert>
     );
   }
 
-  if (items.length === 0) {
+  if (rows.length === 0) {
     return (
       <EmptyState
         title={t('cart.empty')}
@@ -69,14 +82,6 @@ export function CartPanel() {
       />
     );
   }
-
-  const rows = items.map((item, i) => {
-    const book = bookQueries[i]?.data;
-    const loading = bookQueries[i]?.isLoading;
-    const line = (book?.price ?? 0) * item.quantity;
-    return { item, book, line, loading };
-  });
-  const subtotal = rows.reduce((sum, row) => sum + row.line, 0);
 
   return (
     <div className="space-y-6">

@@ -1,61 +1,15 @@
-import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
-import { type ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { useOrdersQuery } from '@/hooks';
-import { type Order } from '@/types/order';
-import { DataTable } from '@/components/DataTable';
-import { formatMoney, formatDate } from '@/utils';
-import { usePreferences } from '@/hooks';
+import { useOrdersQuery, usePreferences, usePageTitle } from '@/hooks';
+import { OrdersTable } from '@/components/OrdersTable';
 import { Alert } from '@/components/Alert';
-import { Badge } from '@/components/Badge';
-import { Button } from '@/components/Button';
 import { PageLoader } from '@/components/Spinner';
 import { ApiError } from '@/services/http';
 
 export function OrdersContainer() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.orders'));
   const locale = usePreferences((s) => s.locale);
   const { data, isLoading, error } = useOrdersQuery();
-
-  const columns = useMemo<ColumnDef<Order>[]>(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'ID',
-        cell: ({ row }) => (
-          <Link className="text-primary underline" to={`/panel/orders/${row.original.id}`}>
-            {row.original.id.slice(-8)}
-          </Link>
-        ),
-      },
-      {
-        accessorKey: 'status',
-        header: t('common.status'),
-        cell: ({ row }) => <Badge variant="secondary">{row.original.status}</Badge>,
-      },
-      {
-        accessorKey: 'totalAmount',
-        header: 'Total',
-        cell: ({ row }) => formatMoney(row.original.totalAmount, 'USD', locale),
-      },
-      {
-        accessorKey: 'createdAt',
-        header: 'Created',
-        cell: ({ row }) => formatDate(row.original.createdAt, locale),
-      },
-      {
-        id: 'actions',
-        header: t('common.actions'),
-        cell: ({ row }) => (
-          <Button asChild size="sm" variant="outline">
-            <Link to={`/panel/orders/${row.original.id}`}>{t('panel.orderDetail')}</Link>
-          </Button>
-        ),
-      },
-    ],
-    [t, locale],
-  );
 
   if (isLoading) return <PageLoader />;
   if (error) {
@@ -69,7 +23,7 @@ export function OrdersContainer() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">{t('nav.orders')}</h1>
-      <DataTable columns={columns} data={data ?? []} />
+      <OrdersTable orders={data ?? []} locale={locale} />
     </div>
   );
 }
